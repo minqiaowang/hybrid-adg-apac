@@ -6,7 +6,7 @@ Now we can run some testing with the ADG.
 
 This lab assumes you have already completed the following labs:
 
-- Deploy Active Data Guard with LVM or ASM
+- Deploy Active Data Guard with LVM
 
 ## Step 1: Test transaction replication
 

@@ -5,12 +5,9 @@ This procedure is basically the same as migrating the database from on-premise t
 ##Prerequisites
 
 This lab assumes you have already completed the following labs:
-
-- Prepare On Premise Database (with LVM)
-- Provision DBCS on OCI
 - Setup Connectivity between on-premise and DBCS
 
-**Note: The following steps is for the cloud database using LVM for the storage management in Lab5. If you chose ASM for the storage, please use the other Lab for ASM.**
+**Note: The following steps is for the cloud database using LVM for the storage management. If you chose ASM for the storage, please use the other Lab for ASM.**
 
 ##Step 1: Manually Delete the Database Created by Tooling 
 
@@ -20,7 +17,7 @@ To delete the starter database, use the manual method of removing the database f
 
 To manually delete the database on the cloud host, run the steps below.
 
-1. Connect to the DBCS VM which you created in Lab5 with opc user. Use putty tool (Windows) or command line (Mac, linux)
+1. Connect to the DBCS VM with opc user. Use putty tool (Windows) or command line (Mac, linux)
 
    ```
    ssh -i labkey opc@xxx.xxx.xxx.xxx
@@ -39,6 +36,7 @@ To manually delete the database on the cloud host, run the steps below.
 3. Connect database as sysdba. Get the current `db_unique_name` for the Cloud database. 
 
 ```
+$ sqlplus / as sysdba
 SQL> select DB_UNIQUE_NAME from v$database;
 
 DB_UNIQUE_NAME
@@ -129,7 +127,7 @@ Version 19.7.0.0.0
 
 As **oracle** user, copy the on-premise database password file to cloud host `$ORACLE_HOME/dbs` directory. 
 
-1. Copy the following command, change the (xxx.xxx.xxx.xxx) to the on-premise host public ip.
+1. Copy the following command, change the (xxx.xxx.xxx.xxx) to the on-premise host public ip or hostname.
 
 ```
 <copy>scp oracle@xxx.xxx.xxx.xxx:/u01/app/oracle/product/19c/dbhome_1/dbs/orapwORCL $ORACLE_HOME/dbs</copy>
@@ -166,7 +164,7 @@ Make sure that `$ORACLE_HOME/network/admin/sqlnet.ora` contains the following li
    ENCRYPTION_WALLET_LOCATION=(SOURCE=(METHOD=FILE)(METHOD_DATA=(DIRECTORY=/opt/oracle/dcs/commonstore/wallets/tde/$ORACLE_UNQNAME)))
    ```
 
-1. Copy the following command, change the (xxx.xxx.xxx.xxx) to the on-premise host public ip.  Change `ORCL_nrt1d4` to the unique name of your standby db.
+1. Copy the following command, change the (xxx.xxx.xxx.xxx) to the on-premise host public ip or hostname. Change `ORCL_nrt1d4` to the unique name of your standby db.
 
    ```
    <copy>
@@ -734,7 +732,7 @@ DMON
 SQL> 
 ```
 
-3. Register the database via DGMGRL. Replace `ORCL_nrt1d4` with your standby db unique name.
+3. Register the database via DGMGRL. Replace `ORCL_nrt1d4` with your standby db unique name. You can run the command as oracle user from on-premise side or cloud side.
 
 ```
 [oracle@dbstby ~]$ dgmgrl sys/Ora_DB4U@ORCL
@@ -767,7 +765,7 @@ Configuration Status:
 SUCCESS   (status updated 42 seconds ago)
 ```
 
-if there is a warning message, Warning: ORA-16809: multiple warnings detected for the member. You can wait serveral minutes and show configuration again.
+if there is a warning message, `Warning: ORA-16809: multiple warnings detected for the member.` or `Warning: ORA-16854: apply lag could not be determined.` You can wait serveral minutes and show configuration again.
 
 Now, the Hybrid Data Guard is ready. The standby database is in mount status.
 

@@ -13,17 +13,17 @@ This lab assumes you have:
 
 - The Region and Compartment which the DBCS created.
 
-- A DBCS which assigned to you.
+- A DBCS which assigned to you to act the standby database.
 
 - SSH Keys download from [here](https://github.com/minqiaowang/hybrid-adg-apac/raw/master/ssh-keys/labkey.zip). Unzip the files to your own laptop.
 
-- A compute instance IP address which assigned to you.
+- A compute VM instance IP address which assigned to you to act as the on-premise database.
 
   
 
 ## **STEP 1**: Connect to your Compute instance
 
-There are multiple ways to connect to your cloud instance.  Choose the way to connect to your cloud instance that matches the SSH Key you downloaded. 
+There are multiple ways to connect to your cloud instance.  Choose the way to connect to your cloud instance using the SSH Key you downloaded and unzipped. 
 
 - MAC or Windows CYCGWIN Emulator
 
@@ -55,7 +55,7 @@ There are multiple ways to connect to your cloud instance.  Choose the way to co
 
 4. Click **Connection** > **SSH** > **Auth** in the left navigation pane and configure the SSH private key to use by clicking Browse under Private key file for authentication.
 
-5. Navigate to the location where you saved your SSH private key file, select the file, and click Open.  NOTE:  You cannot connect while on VPN or in the Oracle office on clear-corporate (choose clear-internet).
+5. Navigate to the location where you saved your SSH private key file, select the file like labkey.ppk, and click Open.  NOTE:  You cannot connect while on VPN or in the Oracle office on clear-corporate (choose clear-internet).
 
     ![](./images/putty-auth.png " ")
 
@@ -68,7 +68,7 @@ There are multiple ways to connect to your cloud instance.  Choose the way to co
 ## **STEP 2**: Browse the DBCS on OCI
 
 You can browse the Database Cloud Service that assigned to you.
-1.  Connect to the Oracle Cloud Infrastructure Using the URL that instructor provided, like: `https://console.ap-seoul-1.oraclecloud.com`. Enter the tenant name, username and password. 
+1.  Connect to the Oracle Cloud Infrastructure Using the URL that instructor provided, like: `https://console.**-***-1.oraclecloud.com`. Enter the tenant name, username and password. 
     
     ![](images/image-20200808121527712.png)
     
@@ -86,4 +86,4 @@ You can browse the Database Cloud Service that assigned to you.
 
 5. Connect to the DB host with command line or putty as the Step 1.
 
-6. Now you can do the next lab.
+6. Now you can move to the next lab.

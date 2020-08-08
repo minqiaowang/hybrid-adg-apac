@@ -18,7 +18,7 @@ This lab assumes you have already completed the following:
 Click on the link below to download the Resource Manager zip files you need to build your enviornment.
 
 - [db19c-primary-num.zip](https://github.com/minqiaowang/hybrid-adg-apac/raw/master/setup-labenv/db19c-primary-num.zip) - Packaged terraform primary database instance creation script
-- [dbcs-standby-num.zip](https://github.com/minqiaowang/on-premise-adg/raw/master/setup-labenv/dbcs-standby-num.zip) - Packaged terraform standby database cloud service creation script
+- [dbcs-standby-num.zip](https://github.com/minqiaowang/hybrid-adg-apac/raw/master/setup-labenv/dbcs-standby-num.zip) - Packaged terraform standby database cloud service creation script
 
 
 

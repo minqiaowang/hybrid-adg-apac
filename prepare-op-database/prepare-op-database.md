@@ -6,7 +6,7 @@ In this lab, You will use a compute instance in the OCI to simulate the on-premi
 
 This lab assumes you have completed the following labs:
 
-* Access your ADG lab environment.
+* Access your ADG Workshop environment.
 
 
 
