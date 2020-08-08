@@ -5,7 +5,7 @@ Oracle’s Maximum Availability Architecture (Oracle MAA) is the best practices 
 An effective disaster recovery plan can be costly due to the need to establish, equip and manage a remote data center. The Oracle Cloud offers a great alternative for hosting standby databases for customers who do not have a DR site or who prefer not to deal with the cost or complexity of managing a remote data center. Existing production databases remain on-premises and standby databases used for DR are deployed on the Oracle Cloud. This mode of deployment is commonly referred to as a hybrid cloud implementation. 
 
 ## Workshops
-Click [here](https://minqiao.github.io/hybrid-adg-apac/freetier/index.html) access the workshop using the web interface.
+Click [here](https://minqiaowang.github.io/hybrid-adg-apac/freetier/index.html) access the workshop using the web interface.
 
 
 ## Get an Oracle Cloud Trial Account for Free!
