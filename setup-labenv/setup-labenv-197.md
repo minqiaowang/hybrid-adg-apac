@@ -6,14 +6,11 @@ In this workshop, you will use the compute instances in the Oracle Cloud to simu
 
 ### Objectives
 
--   Setup a network and compute instance using the DB19c Marketplace image
--   Use Terraform and Resource Manager to complete the setup
+-   Setup a VCN and compute instances using the DB19c Marketplace image.
+-   Setup a VCN and DB systems.
+-   Use Terraform and Resource Manager to complete the setup.
 
 ### Lab Prerequisites
-
-This lab assumes you have already completed the following:
-- Have Oracle Cloud Account
-- Create SSH Keys
 
 Click on the link below to download the Resource Manager zip files you need to build your enviornment.
 
