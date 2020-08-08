@@ -6,7 +6,7 @@ A failover is an unplanned event that assumes the primary database is lost. The 
 
 This lab assumes you have already completed the following labs:
 
-- Deploy Active Data Guard with LVM or ASM
+- Deploy Active Data Guard with LVM
 - Test with Active Data Guard
 
 ## Step 1: Setup the current primary database flashback on

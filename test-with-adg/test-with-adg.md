@@ -54,10 +54,10 @@ User altered.
 SQL>exit;
 ```
 
-2. Connect with testuser, create test table and insert a test record.
+2. Connect with testuser using the on-premise host ip address or hostname, create test table and insert a test record.
 
 ```
-[oracle@workshop ~]$ sqlplus testuser/testuser@workshop:1521/orclpdb
+[oracle@workshop ~]$ sqlplus testuser/testuser@xxx.xxx.xxx.xxx:1521/orclpdb
 
 SQL*Plus: Release 19.0.0.0.0 - Production on Sat Feb 1 06:59:56 2020
 Version 19.7.0.0.0
@@ -130,11 +130,27 @@ Disconnected from Oracle Database 19c EE Extreme Perf Release 19.0.0.0.0 - Produ
 Version 19.7.0.0.0
 [oracle@dbstby ~]$ 
 ```
+If the `OPEN_MODE` is READ ONLY, you can run the following command in sqlplus as sysdba, then check the `open_mode` again.
+```
+SQL> alter database recover managed standby database cancel;
 
-4. From cloud side, connect as testuser to orclpdb. Check if the test table and record has replicated to the standby.
+Database altered.
+
+SQL> alter database recover managed standby database using current logfile disconnect;
+
+Database altered.
+
+SQL> select open_mode,database_role from v$database;
+
+OPEN_MODE	     DATABASE_ROLE
+-------------------- ----------------
+READ ONLY WITH APPLY PHYSICAL STANDBY
+```
+
+4. From cloud side, connect as testuser to orclpdb using DBCS host ip address or hostname. Check if the test table and record has replicated to the standby.
 
 ```
-[oracle@dbstby ~]$ sqlplus testuser/testuser@dbstby:1521/orclpdb
+[oracle@dbstby ~]$ sqlplus testuser/testuser@xxx.xxx.xxx.xxx:1521/orclpdb
 
 SQL*Plus: Release 19.0.0.0.0 - Production on Sat Feb 1 07:09:27 2020
 Version 19.7.0.0.0
