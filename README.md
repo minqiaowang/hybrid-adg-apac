@@ -6,7 +6,7 @@ An effective disaster recovery plan can be costly due to the need to establish, 
 
 ## Workshops
 - [Click here to access the Workshop](https://minqiaowang.github.io/hybrid-adg-apac/freetier/index.html) using the web interface.
-- If you want to setup the on-premise and DBCS side using the terraform scripts. [Please refer the link](https://github.com/minqiaowang/hybrid-adg-apac/blob/master/setup-labenv/setup-labenv-197.md)
+- If you want to setup the on-premise and DBCS side using the terraform scripts. [Please refer this link.](https://github.com/minqiaowang/hybrid-adg-apac/blob/master/setup-labenv/setup-labenv-197.md)
 
 
 ## Get an Oracle Cloud Trial Account for Free!
