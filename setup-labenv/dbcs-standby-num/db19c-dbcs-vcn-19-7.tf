@@ -194,5 +194,6 @@ resource "oci_database_db_system" "db_system" {
   hostname                = "DBCS${count.index}"
   data_storage_size_in_gb = "256"
   license_model           = "${var.license_model}"
+  node_count              = "1"
 }
 
