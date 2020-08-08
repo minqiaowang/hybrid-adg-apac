@@ -30,10 +30,7 @@ SQL> show pdbs
     CON_ID CON_NAME			  OPEN MODE  RESTRICTED
 ---------- ------------------------------ ---------- ----------
 	 2 PDB$SEED			  READ ONLY  NO
-	 3 ORCLPDB			  MOUNTED
-SQL> alter pluggable database all open;
-
-Pluggable database altered.
+	 3 ORCLPDB			  READ WRITE
 
 SQL> alter session set container=orclpdb;
 
@@ -51,7 +48,7 @@ SQL> alter user testuser quota unlimited on users;
 
 User altered.
 
-SQL>exit;
+SQL> exit;
 ```
 
 2. Connect with testuser using the on-premise host ip address or hostname, create test table and insert a test record.
@@ -130,7 +127,7 @@ Disconnected from Oracle Database 19c EE Extreme Perf Release 19.0.0.0.0 - Produ
 Version 19.7.0.0.0
 [oracle@dbstby ~]$ 
 ```
-If the `OPEN_MODE` is READ ONLY, you can run the following command in sqlplus as sysdba, then check the `open_mode` again.
+If the `OPEN_MODE` is **READ ONLY**, you can run the following command in sqlplus as sysdba, then check the `open_mode` again, you can see the `OPEN_MODE` is **READ ONLY WITH APPLY** now.
 ```
 SQL> alter database recover managed standby database cancel;
 
@@ -268,17 +265,6 @@ DGMGRL> validate database ORCL_nrt1d4
     orcl_nrt1d4:  YES            
     Validating static connect identifier for the primary database orcl...
     The static connect identifier allows for a connection to database "orcl".
-
-  Current Log File Groups Configuration:
-    Thread #  Online Redo Log Groups  Standby Redo Log Groups Status       
-              (orcl)                  (orcl_nrt1d4)                        
-    1         3                       2                       Insufficient SRLs
-
-  Future Log File Groups Configuration:
-    Thread #  Online Redo Log Groups  Standby Redo Log Groups Status       
-              (orcl_nrt1d4)           (orcl)                               
-    1         3                       0                       Insufficient SRLs
-    Warning: standby redo logs not configured for thread 1 on orcl
 
 DGMGRL> 
 ```

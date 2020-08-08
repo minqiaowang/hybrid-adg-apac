@@ -15,7 +15,7 @@ This lab assumes you have:
 
 - A DBCS which assigned to you to act the standby database.
 
-- SSH Keys download from [here](https://github.com/minqiaowang/hybrid-adg-apac/raw/master/ssh-keys/labkey.zip). Unzip the files to your own laptop.
+- SSH Keys download from [here - labkey.zip](https://github.com/minqiaowang/hybrid-adg-apac/raw/master/ssh-keys/labkey.zip). Unzip the files to your own laptop.
 
 - A compute VM instance IP address which assigned to you to act as the on-premise database.
 

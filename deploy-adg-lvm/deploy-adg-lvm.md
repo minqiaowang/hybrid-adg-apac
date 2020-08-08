@@ -355,9 +355,6 @@ ORCL_NRT1D4 =
       (SERVICE_NAME = ORCL_nrt1d4)
     )
   )
-
-LISTENER_ORCL =
-  (ADDRESS = (PROTOCOL = TCP)(HOST = dbstby)(PORT = 1521))
   
 ORCL =
   (DESCRIPTION =

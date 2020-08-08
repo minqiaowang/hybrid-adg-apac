@@ -25,16 +25,16 @@ ssh -i labkey opc@xxx.xxx.xxx.xxx
 <copy>sudo vi /etc/hosts</copy>
 ```
 
-   - From on-premise side, add the cloud host **public ip** and host name in the file like the following:
+   - From on-premise side, add the cloud host **public ip**, hostname and domain name in the file like the following:
 
    ```
-   xxx.xxx.xxx.xxx dbcs**
+   xxx.xxx.xxx.xxx dbcs**.subnet1.standbyvcn.oraclevcn.com dbcs**
    ```
 
-   - From the cloud side, add the on-premise host **public ip** and host name in the file like the following:
+   - From the cloud side, add the on-premise host **public ip**, hostname and domain name in the file like the following:
 
    ```
-   xxx.xxx.xxx.xxx primary**
+   xxx.xxx.xxx.xxx primary**.subnet1.primaryvcn.oraclevcn.com primary**
    ```
 
 3. Validate the connectivity, install telnet on both sides.
