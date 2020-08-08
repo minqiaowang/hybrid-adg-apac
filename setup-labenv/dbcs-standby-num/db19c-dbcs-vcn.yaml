@@ -1,0 +1,24 @@
+locale: "en"
+variableGroups:
+  - title: "Enter the number of instances:"
+    variables:
+      - ${num_instances}
+  - title: "Enter Database Administrator User Password"
+    variables:
+      - ${db_admin_password}
+  - title: "Enter the DB System shape:"
+    variables:
+      - ${db_system_shape}
+  - title: "Enter the Image Cloud ID from your workshop guide"
+    variables:
+      - ${instance_image_ocid}
+  - title: "Enter Your Public Key (one line) for your instance here:"
+    variables:
+      - ${ssh_public_key}
+  - title: "Hidden"
+    variables:
+      - ${compartment_ocid}
+      - ${tenancy_ocid}
+      - ${region}
+    visible: false
+    
