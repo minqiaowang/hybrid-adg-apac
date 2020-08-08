@@ -15,7 +15,7 @@ This lab assumes you have:
 
 - A DBCS which assigned to you.
 
-- SSH Keys download from [here](). Unzip the files to your own laptop.
+- SSH Keys download from [here](https://github.com/minqiaowang/hybrid-adg-apac/raw/master/ssh-keys/labkey.zip). Unzip the files to your own laptop.
 
 - A compute instance IP address which assigned to you.
 
