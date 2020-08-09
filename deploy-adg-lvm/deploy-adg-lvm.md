@@ -667,7 +667,7 @@ SQL>
 
    
 
-2. Run the command on primary and standby database to enable the data guard broker.
+2. Run the command on primary and standby database using sqlplus with sysdba to enable the data guard broker.
 
 - From on-premise side,
 
@@ -729,7 +729,7 @@ DMON
 SQL> 
 ```
 
-3. Register the database via DGMGRL. Replace `ORCL_nrt1d4` with your standby db unique name. You can run the command as oracle user from on-premise side or cloud side.
+3. Register the database via DGMGRL. Replace `ORCL_nrt1d4` with your standby db unique name. You can run the command as **oracle** user from on-premise side or cloud side.
 
 ```
 [oracle@dbstby ~]$ dgmgrl sys/Ora_DB4U@ORCL
