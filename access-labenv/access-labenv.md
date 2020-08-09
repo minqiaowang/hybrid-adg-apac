@@ -80,7 +80,7 @@ You can browse the Database Cloud Service that assigned to you.
 
     ![](images/image-20200808122618014.png)
 
-4. In the **DB system Details** page, click the **Nodes** under the **Resources**, Write down the hostname and public ip address of the DB host.
+4. In the **DB system Details** page, click the **Nodes** under the **Resources**, Write down the hostname, domain name and public ip address of the DB host.
 
     ![](images/image-20200808122936413.png)
 
