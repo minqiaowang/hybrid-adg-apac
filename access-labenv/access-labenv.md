@@ -3,7 +3,7 @@
 ## Introduction
 In this lab, you will learn how to access your ADG workshop environment. You will be assigned an environment to this workshop. It's include:
 
-- A VM which already have installed a database 19c to simulate the on-premise database. You can connect to the VM instance with a ssh tools. The public ip address will be provide by the instructor.
+- A VM which already have installed a database 19c to simulate the on-premise database. You can connect to the VM instance with a ssh tools. The hostname and public ip address will be provide by the instructor.
 - A Database Cloud Service which act as the standby database in the workshop. You will be assigned an OCI account to log into the Oracle Cloud console to access and manage your DBCS.
 
 ### Prerequisites
@@ -11,13 +11,13 @@ In this lab, you will learn how to access your ADG workshop environment. You wil
 This lab assumes you have:
 - A Cloud account including: tenant name, username, password.
 
-- The Region and Compartment which the DBCS created.
+- The Region and Compartment where the DBCS created.
 
 - A DBCS which assigned to you to act the standby database.
 
 - SSH Keys download from [here - labkey.zip](https://github.com/minqiaowang/hybrid-adg-apac/raw/master/ssh-keys/labkey.zip). Unzip the files to your own laptop.
 
-- A compute VM instance IP address which assigned to you to act as the on-premise database.
+- A compute VM instance hostname and IP address which assigned to you to act as the on-premise database.
 
   
 
