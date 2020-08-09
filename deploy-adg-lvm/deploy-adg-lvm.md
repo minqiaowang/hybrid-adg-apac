@@ -349,7 +349,7 @@ In the `ORCL_NRT1D4`(Standby db unique name) description, delete the domain name
 
 ORCL_NRT1D4 =
   (DESCRIPTION =
-    (ADDRESS = (PROTOCOL = TCP)(HOST = dbstby)(PORT = 1521))
+    (ADDRESS = (PROTOCOL = TCP)(HOST = dbcs**.***.***.oraclevcn.com)(PORT = 1521))
     (CONNECT_DATA =
       (SERVER = DEDICATED)
       (SERVICE_NAME = ORCL_nrt1d4)
