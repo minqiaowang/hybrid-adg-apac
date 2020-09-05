@@ -312,10 +312,23 @@ There are several ways to check the lag between the primary and standby.
 
     
 
-5. From standby site, connect as sysdba, query the `v$dataguard_stats` view to check the lag.
+5. From standby site, connect as sysdba. Check the Oracle System Change Number (SCN). Compare it with the primary side.
 
    ```
    SQL> connect / as sysdba
+   Connected.
+   SQL> SELECT current_scn FROM v$database;
+   
+   CURRENT_SCN
+   -----------
+       2784330
+   ```
+   
+   
+   
+6. From standby site, query the `v$dataguard_stats` view to check the lag.
+
+   ```
    SQL> set linesize 120;
    SQL> column name format a25;
    SQL> column value format a20;
@@ -331,18 +344,6 @@ There are several ways to check the lag between the primary and standby.
    estimated startup time	  9		                 09/05/2020 07:17:33
    
    SQL> 
-   ```
-
-   
-
-6. Check the Oracle System Change Number (SCN) from standby side. Compare it with the primary side.
-
-   ```
-   SQL> SELECT current_scn FROM v$database;
-   
-   CURRENT_SCN
-   -----------
-       2784330
    ```
 
    
@@ -381,6 +382,8 @@ There are several ways to check the lag between the primary and standby.
    
 
 8. Keep the on-premise side workload window open and running.
+
+   
 
 ## Step 3: Test DML Redirection
 

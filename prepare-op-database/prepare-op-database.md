@@ -453,7 +453,7 @@ alter database add logfile group 6 '/u01/app/oracle/oradata/ORCL/redo06.log' siz
 </copy>
 ```
 
-3. Switch the logfile serveral times.
+3. Switch the logfile several times.
 
 ```
 <copy>
