@@ -285,7 +285,7 @@ There are several ways to check the lag between the primary and standby.
 
    
 
-4. From the standby side, connect as **testuser** to orclpdb,  count the records in the sample table several times. Change the `xxx.xxx.xxx.xxx` to the standby database hostname or public ip address. Compare it with the primary side.
+4. From the standby side, connect as **testuser** to orclpdb,  count the records in the sample table several times. Change the `xxx.xxx.xxx.xxx` to the standby database hostname or public ip address. Compare the record number with the primary side.
 
    ```
    [oracle@dbcs0 ~]$ sqlplus testuser/testuser@xxx.xxx.xxx.xxx:1521/orclpdb
@@ -388,7 +388,7 @@ Starting  with Oracle DB 19c, we can run DML operations on Active Data Guard sta
 
 Automatic redirection of DML operations to the primary can be configured at the system level or the session level. The session level setting overrides the system level
 
-1. From cloud side, connect to orclpdb as **testuser**. Test the DML before and after the DML Redirection is enabled.
+1. From the standby side, connect to orclpdb as **testuser**. Test the DML before and after the DML Redirection is enabled.
 
 ```
 [oracle@dbcs0 ~]$ sqlplus testuser/testuser@xxx.xxx.xxx.xxx:1521/orclpdb
@@ -436,7 +436,7 @@ Version 19.7.0.0.0
 [oracle@dbstby ~]$ 
 ```
 
-2. From on-premise side, Press `Ctrl-C` to cancel the running workload in step 2. Connect to orclpdb as **testuser**. Check the records in the test table.
+2. From the primary side, Press `Ctrl-C` to cancel the running workload in step 2. Connect to orclpdb as **testuser**. Check the records in the test table.
 
 ```
 [oracle@primary0 ~]$ sqlplus testuser/testuser@orclpdb
