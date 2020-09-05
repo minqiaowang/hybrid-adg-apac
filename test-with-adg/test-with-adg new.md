@@ -171,72 +171,151 @@ SQL>
 
 
 
-## Step 2: Test DML Redirection
+## Step 2: Check lag between the primary and standby
 
-Starting  with Oracle DB 19c, we can run DML operations on Active Data Guard standby databases. This enables you to occasionally execute DMLs on read-mostly applications on the standby database.
+There are several ways to check the lag between the primary and standby.
 
-Automatic redirection of DML operations to the primary can be configured at the system level or the session level. The session level setting overrides the system level
-
-1. From cloud side, connect to orclpdb as testuser. Test the DML before and after the DML Redirection is enabled.
-
-```
-SQL> insert into test values(2,'line2');
-insert into test values(2,'line2')
-            *
-ERROR at line 1:
-ORA-16000: database or pluggable database open for read-only access
-
-
-SQL> ALTER SESSION ENABLE ADG_REDIRECT_DML;
-
-Session altered.
-
-SQL> insert into test values(2,'line2');
-
-1 row created.
-
-SQL> commit; 
-
-Commit complete.
-
-SQL> select * from test;
-
-	 A B
----------- --------------------
-	 2 line2
-	 1 line1
-
-SQL> exit
-Disconnected from Oracle Database 19c EE Extreme Perf Release 19.0.0.0.0 - Production
-Version 19.7.0.0.0
-[oracle@dbstby ~]$ 
-```
-
-2. From on-premise side, connect to orclpdb as testuser. Check the records in the test table.
-
-```
-SQL> select * from test;
-
-	 A B
----------- --------------------
-	 2 line2
-	 1 line1
-
-SQL> exit
-Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
-Version 19.7.0.0.0
-[oracle@adgstudent1 ~]$ 
-```
-
-You may encounter the performance issue when using the DML redirection. This is because each of the DML is issued on a standby database will be passed to the primary database where it is executed. The session waits until the corresponding changes are shipped to and applied to the standby. So it's support read-mostly applications, which occasionally execute DMLs, on the standby database.
-
-## Step 3: Check lag between the primary and standby
-
-There are several ways to check the log lag between the primary and standby.
-
-1. From standby site, connect as sysdba, query the `v$dataguard_stats` view.
+1. First let's prepare a sample workload in the primary side. Copy the following command:
 
    ```
+   <copy>
+   wget https://github.com/minqiaowang/hybrid-adg-apac/raw/master/test-with-adg/workload.sh
+   wget https://github.com/minqiaowang/hybrid-adg-apac/raw/master/test-with-adg/scn.sql
+   </copy>
+   ```
+
+   
+
+2. From on-premise side, run as **oracle** user, download scripts using the command you copied.
+
+   ```
+   [oracle@primary0 ~]$ wget https://github.com/minqiaowang/hybrid-adg-apac/raw/master/test-with-adg/workload.sh
+   --2020-09-05 09:22:06--  https://github.com/minqiaowang/hybrid-adg-apac/raw/master/test-with-adg/workload.sh
+   Resolving github.com (github.com)... 140.82.112.4
+   Connecting to github.com (github.com)|140.82.112.4|:443... connected.
+   HTTP request sent, awaiting response... 302 Found
+   Location: https://raw.githubusercontent.com/minqiaowang/hybrid-adg-apac/master/test-with-adg/workload.sh [following]
+   --2020-09-05 09:22:07--  https://raw.githubusercontent.com/minqiaowang/hybrid-adg-apac/master/test-with-adg/workload.sh
+   Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 151.101.156.133
+   Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|151.101.156.133|:443... connected.
+   HTTP request sent, awaiting response... 200 OK
+   Length: 1442 (1.4K) [text/plain]
+   Saving to: ‘workload.sh’
+   
+   100%[================================================>] 1,442       --.-K/s   in 0s      
+   
+   2020-09-05 09:22:08 (12.4 MB/s) - ‘workload.sh’ saved [1442/1442]
+   
+   [oracle@primary0 ~]$ wget https://github.com/minqiaowang/hybrid-adg-apac/raw/master/test-with-adg/scn.sql
+   --2020-09-05 09:22:16--  https://github.com/minqiaowang/hybrid-adg-apac/raw/master/test-with-adg/scn.sql
+   Resolving github.com (github.com)... 140.82.112.4
+   Connecting to github.com (github.com)|140.82.112.4|:443... connected.
+   HTTP request sent, awaiting response... 302 Found
+   Location: https://raw.githubusercontent.com/minqiaowang/hybrid-adg-apac/master/test-with-adg/scn.sql [following]
+   --2020-09-05 09:22:17--  https://raw.githubusercontent.com/minqiaowang/hybrid-adg-apac/master/test-with-adg/scn.sql
+   Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 151.101.156.133
+   Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|151.101.156.133|:443... connected.
+   HTTP request sent, awaiting response... 200 OK
+   Length: 108 [text/plain]
+   Saving to: ‘scn.sql’
+   
+   100%[================================================>] 108         --.-K/s   in 0s      
+   
+   2020-09-05 09:22:17 (3.37 MB/s) - ‘scn.sql’ saved [108/108]
+   
+   [oracle@primary0 ~]$ 
+   ```
+
+   
+
+3. Change mode of the `workload.sh` file and run the workload. Ignore the error message of drop table. Keep this window open and running for the next few steps in this lab.
+
+   ```
+   [oracle@primary0 ~]$ chmod a+x workload.sh 
+   [oracle@primary0 ~]$ . ./workload.sh 
+   
+     NOTE:
+     To break out of this batch
+     job, please issue CTL-C 
+   
+   ...sleeping 5 seconds
+   
+     drop table sale_orders
+                *
+   ERROR at line 1:
+   ORA-00942: table or view does not exist
+   
+   
+   
+   Table created.
+   
+   
+   10 rows created.
+   
+   
+   Commit complete.
+   
+   
+     COUNT(*)
+   ----------
+   	10
+   
+   
+   CURRENT_SCN TIME
+   ----------- ---------------
+       2814533 20200905-092831
+   
+   
+   10 rows created.
+   
+   
+   Commit complete.
+   
+   
+     COUNT(*)
+   ----------
+   	20
+   
+   
+   CURRENT_SCN TIME
+   ----------- ---------------
+       2814548 20200905-092833
+       
+   ```
+
+   
+
+4. From the standby side, connect as **testuser** to orclpdb,  count the records in the sample table several times. Change the `xxx.xxx.xxx.xxx` to the standby database hostname or public ip address. Compare it with the primary side.
+
+   ```
+   [oracle@dbcs0 ~]$ sqlplus testuser/testuser@xxx.xxx.xxx.xxx:1521/orclpdb
+   
+   SQL*Plus: Release 19.0.0.0.0 - Production on Sat Sep 5 09:41:29 2020
+   Version 19.7.0.0.0
+   
+   Copyright (c) 1982, 2020, Oracle.  All rights reserved.
+   
+   Last Successful login time: Sat Sep 05 2020 02:09:45 +00:00
+   
+   Connected to:
+   Oracle Database 19c EE Extreme Perf Release 19.0.0.0.0 - Production
+   Version 19.7.0.0.0
+   
+   SQL> select count(*) from sale_orders;
+   
+     COUNT(*)
+   ----------
+   	390
+   
+   SQL> 
+   ```
+
+    
+
+5. From standby site, connect as sysdba, query the `v$dataguard_stats` view to check the lag.
+
+   ```
+   SQL> connect / as sysdba
    SQL> set linesize 120;
    SQL> column name format a25;
    SQL> column value format a20;
@@ -256,33 +335,19 @@ There are several ways to check the log lag between the primary and standby.
 
    
 
-2. Check the Oracle System Change Number (SCN) from the primary and standby.
+6. Check the Oracle System Change Number (SCN) from standby side. Compare it with the primary side.
 
-   - on primary side:
+   ```
+   SQL> SELECT current_scn FROM v$database;
+   
+   CURRENT_SCN
+   -----------
+       2784330
+   ```
 
-     ```
-     SQL> SELECT current_scn FROM v$database;
-     
-     CURRENT_SCN
-     -----------
-         2784376
-     ```
+   
 
-     
-
-   - on standby side:
-
-     ```
-     SQL> SELECT current_scn FROM v$database;
-     
-     CURRENT_SCN
-     -----------
-         2784330
-     ```
-
-     
-
-3. Check with Data Guard Broker. Change `ORCL_nrt1d4` with your standby database unique name.
+7. Check lag using Data Guard Broker. Change `ORCL_nrt1d4` with your standby database unique name.
 
    ```
    [oracle@dbcs0 ~]$ dgmgrl sys/Ora_DB4U@orcl
@@ -315,13 +380,93 @@ There are several ways to check the log lag between the primary and standby.
 
    
 
-4. Prepare a sample workload.
+8. Keep the on-premise side workload window open and running.
 
-5. asdf
+## Step 3: Test DML Redirection
 
-6. asdf
+Starting  with Oracle DB 19c, we can run DML operations on Active Data Guard standby databases. This enables you to occasionally execute DMLs on read-mostly applications on the standby database.
 
-7. sdaf
+Automatic redirection of DML operations to the primary can be configured at the system level or the session level. The session level setting overrides the system level
+
+1. From cloud side, connect to orclpdb as **testuser**. Test the DML before and after the DML Redirection is enabled.
+
+```
+[oracle@dbcs0 ~]$ sqlplus testuser/testuser@xxx.xxx.xxx.xxx:1521/orclpdb
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Sat Sep 5 10:04:04 2020
+Version 19.7.0.0.0
+
+Copyright (c) 1982, 2020, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Sep 05 2020 02:09:45 +00:00
+
+Connected to:
+Oracle Database 19c EE Extreme Perf Release 19.0.0.0.0 - Production
+Version 19.7.0.0.0
+
+SQL> insert into test values(2,'line2');
+insert into test values(2,'line2')
+            *
+ERROR at line 1:
+ORA-16000: database or pluggable database open for read-only access
+
+
+SQL> ALTER SESSION ENABLE ADG_REDIRECT_DML;
+
+Session altered.
+
+SQL> insert into test values(2,'line2');
+
+1 row created.
+
+SQL> commit; 
+
+Commit complete.
+
+SQL> select * from test;
+
+	 A B
+---------- --------------------
+	 2 line2
+	 1 line1
+
+SQL> exit
+Disconnected from Oracle Database 19c EE Extreme Perf Release 19.0.0.0.0 - Production
+Version 19.7.0.0.0
+[oracle@dbstby ~]$ 
+```
+
+2. From on-premise side, Press `Ctrl-C` to cancel the running workload in step 2. Connect to orclpdb as **testuser**. Check the records in the test table.
+
+```
+[oracle@primary0 ~]$ sqlplus testuser/testuser@orclpdb
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Sat Sep 5 09:50:22 2020
+Version 19.7.0.0.0
+
+Copyright (c) 1982, 2020, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Sep 05 2020 09:33:31 +00:00
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.7.0.0.0
+
+SQL> select * from test;
+
+	 A B
+---------- --------------------
+	 2 line2
+	 1 line1
+
+SQL> exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.7.0.0.0
+[oracle@adgstudent1 ~]$ 
+```
+
+You may encounter the performance issue when using the DML redirection. This is because each of the DML is issued on a standby database will be passed to the primary database where it is executed. The session waits until the corresponding changes are shipped to and applied to the standby. So the DML redirection only support read-mostly applications, which occasionally execute DMLs, on the standby database.
+
 
 ## Step 4: Switchover to the Cloud 
 
