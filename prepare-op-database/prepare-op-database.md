@@ -241,10 +241,12 @@ TEMP			       NO
 USERS			       NO
 ```
 
-2. Copy and run the command to encrypt the USERS tablespace online.
+2. Run the command to encrypt the USERS tablespace online.
 
    ```
-   <copy>alter tablespace users encryption online encrypt;</copy>
+   SQL> alter tablespace users encryption online encrypt;
+
+   Tablespace altered.
    ```
 
    
@@ -252,10 +254,6 @@ USERS			       NO
 3.  Check the status. You can see the USERS tablespace has already encrypted.
 
 ```
-SQL> alter tablespace users encryption online encrypt;
-
-Tablespace altered.
-
 SQL> select tablespace_name, encrypted from dba_tablespaces;
 
 TABLESPACE_NAME 	       ENC
