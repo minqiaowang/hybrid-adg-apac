@@ -381,7 +381,7 @@ There are several ways to check the lag between the primary and standby.
 
    
 
-8. Keep the on-premise side workload window open and running.
+8. From the on-premise side, press `Ctrl-C` to terminate the running workload.
 
    
 
@@ -407,25 +407,30 @@ Connected to:
 Oracle Database 19c EE Extreme Perf Release 19.0.0.0.0 - Production
 Version 19.7.0.0.0
 
+SQL> set timing on
 SQL> insert into test values(2,'line2');
 insert into test values(2,'line2')
-            *
+*
 ERROR at line 1:
 ORA-16000: database or pluggable database open for read-only access
 
 
+Elapsed: 00:00:00.58
 SQL> ALTER SESSION ENABLE ADG_REDIRECT_DML;
 
 Session altered.
 
+Elapsed: 00:00:00.00
 SQL> insert into test values(2,'line2');
 
 1 row created.
 
-SQL> commit; 
+Elapsed: 00:00:26.13
+SQL> commit;
 
 Commit complete.
 
+Elapsed: 00:00:21.12
 SQL> select * from test;
 
 	 A B
@@ -433,42 +438,129 @@ SQL> select * from test;
 	 2 line2
 	 1 line1
 
-SQL> exit
-Disconnected from Oracle Database 19c EE Extreme Perf Release 19.0.0.0.0 - Production
-Version 19.7.0.0.0
-[oracle@dbstby ~]$ 
+Elapsed: 00:00:00.03
+SQL> 
 ```
 
-2. From the primary side, Press `Ctrl-C` to cancel the running workload in step 2. Connect to orclpdb as **testuser**. Check the records in the test table.
+You may encounter the performance issue when using the DML redirection. This is because each of the DML is issued on a standby database will be passed to the primary database where it is executed. The default Data Guard protection mode is Maximum Performance and the redo transport mode is ASYNC. The session waits until the corresponding changes are shipped to and applied to the standby. In order to improve performance of the DML redirection, you need to switch the redo logfile more quickly on the primary side, or you can change the protection mode to Maximum Availability and the redo transport mode to SYNC - This protection mode provides the highest level of data protection, so it's need the high throughput low latency network, you can use FastConnect or deploy the Data Guard in different ADs within the same region.
 
-```
-[oracle@primary0 ~]$ sqlplus testuser/testuser@orclpdb
+2. From the primary side, connect with Data Guard Broker, check the current protection mode and redo transport mode. Change the `orcl_nrt1d4` to your standby db unique name.
 
-SQL*Plus: Release 19.0.0.0.0 - Production on Sat Sep 5 09:50:22 2020
-Version 19.7.0.0.0
+   ```
+   [oracle@primary0 ~]$ dgmgrl sys/Ora_DB4U@orcl
+   DGMGRL for Linux: Release 19.0.0.0.0 - Production on Sun Sep 6 05:09:28 2020
+   Version 19.7.0.0.0
+   
+   Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+   
+   Welcome to DGMGRL, type "help" for information.
+   Connected to "ORCL"
+   Connected as SYSDBA.
+   DGMGRL> show configuration
+   
+   Configuration - adgconfig
+   
+     Protection Mode: MaxPerformance
+     Members:
+     orcl        - Primary database
+       orcl_nrt1d4 - Physical standby database 
+   
+   Fast-Start Failover:  Disabled
+   
+   Configuration Status:
+   SUCCESS   (status updated 20 seconds ago)
+   DGMGRL> show database orcl LogXptMode
+     LogXptMode = 'ASYNC'
+   DGMGRL> show database orcl_nrt1d4 LogXptMode
+     LogXptMode = 'ASYNC'
+   ```
 
-Copyright (c) 1982, 2020, Oracle.  All rights reserved.
+   
 
-Last Successful login time: Sat Sep 05 2020 09:33:31 +00:00
+3. Change the redo transport mode and protection mode. Change the `orcl_nrt1d4` to your standby db unique name.
 
-Connected to:
-Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
-Version 19.7.0.0.0
+   ```
+   DGMGRL> EDIT DATABASE orcl SET PROPERTY LogXptMode='SYNC';
+   Property "logxptmode" updated
+   DGMGRL> EDIT DATABASE orcl_nrt1d4 SET PROPERTY LogXptMode='SYNC';
+   Property "logxptmode" updated
+   DGMGRL> EDIT CONFIGURATION SET PROTECTION MODE AS MAXAVAILABILITY;
+   Succeeded.
+   DGMGRL> show configuration
+   
+   Configuration - adgconfig
+   
+     Protection Mode: MaxAvailability
+     Members:
+     orcl        - Primary database
+       orcl_nrt1d4 - Physical standby database 
+   
+   Fast-Start Failover:  Disabled
+   
+   Configuration Status:
+   SUCCESS   (status updated 42 seconds ago)
+   
+   DGMGRL>
+   ```
 
-SQL> select * from test;
+    
 
-	 A B
----------- --------------------
-	 2 line2
-	 1 line1
+4. From the standby side, test the DML redirection again. You can see the performance improved.
 
-SQL> exit
-Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
-Version 19.7.0.0.0
-[oracle@adgstudent1 ~]$ 
-```
+   ```
+   SQL> insert into test values(3,'line3');
+   
+   1 row created.
+   
+   Elapsed: 00:00:00.25
+   SQL> commit;
+   
+   Commit complete.
+   
+   Elapsed: 00:00:01.07
+   SQL> select * from test;
+   
+        A B
+   ---------- --------------------
+        1 line1
+        2 line2
+        3 line3
+   Elapsed: 00:00:00.03
+   SQL> exit
+   Disconnected from Oracle Database 19c EE Extreme Perf Release 19.0.0.0.0 - Production
+   Version 19.7.0.0.0
+   [oracle@dbstby ~]$ 
+   ```
 
-You may encounter the performance issue when using the DML redirection. This is because each of the DML is issued on a standby database will be passed to the primary database where it is executed. The session waits until the corresponding changes are shipped to and applied to the standby. So the DML redirection only support read-mostly applications, which occasionally execute DMLs, on the standby database.
+   
+
+5. From the primary side, in the Data Guard Broker, switch back the protection mode. Change the `orcl_nrt1d4` to your standby db unique name.
+
+   ```
+   DGMGRL> EDIT CONFIGURATION SET PROTECTION MODE AS MAXPERFORMANCE;
+   Succeeded.
+   DGMGRL> EDIT DATABASE orcl_nrt1d4 SET PROPERTY LogXptMode='ASYNC';
+   Property "logxptmode" updated
+   DGMGRL> EDIT DATABASE orcl SET PROPERTY LogXptMode='ASYNC';
+   Property "logxptmode" updated
+   DGMGRL> show configuration
+   
+   Configuration - adgconfig
+   
+     Protection Mode: MaxPerformance
+     Members:
+     orcl        - Primary database
+       orcl_nrt1d4 - Physical standby database 
+   
+   Fast-Start Failover:  Disabled
+   
+   Configuration Status:
+   SUCCESS   (status updated 20 seconds ago)
+   ```
+
+   
+
+
 
 
 ## Step 4: Switchover to the Cloud 
