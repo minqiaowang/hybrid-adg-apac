@@ -285,7 +285,7 @@ There are several ways to check the lag between the primary and standby.
 
    
 
-4. From the standby side, connect as **testuser** to orclpdb,  count the records in the sample table several times. Change the `xxx.xxx.xxx.xxx` to the standby database hostname or public ip address. Compare the record number with the primary side.
+4. From the standby side, connect as **testuser** to orclpdb,  count the records in the sample table several times. Replace the `xxx.xxx.xxx.xxx` to the standby database hostname or public ip address. Compare the record number with the primary side.
 
    ```
    [oracle@dbcs0 ~]$ sqlplus testuser/testuser@xxx.xxx.xxx.xxx:1521/orclpdb
@@ -348,7 +348,7 @@ There are several ways to check the lag between the primary and standby.
 
    
 
-7. Check lag using Data Guard Broker. Change `ORCL_nrt1d4` with your standby database unique name.
+7. Check lag using Data Guard Broker. Replace `ORCL_nrt1d4` with your standby database unique name.
 
    ```
    [oracle@dbcs0 ~]$ dgmgrl sys/Ora_DB4U@orcl
@@ -442,9 +442,9 @@ Elapsed: 00:00:00.03
 SQL> 
 ```
 
-You may encounter the performance issue when using the DML redirection. This is because each of the DML is issued on a standby database will be passed to the primary database where it is executed. The default Data Guard protection mode is Maximum Performance and the redo transport mode is ASYNC. The session waits until the corresponding changes are shipped to and applied to the standby. In order to improve performance of the DML redirection, you need to switch the redo logfile more quickly on the primary side, or you can change the protection mode to Maximum Availability and the redo transport mode to SYNC - This protection mode provides the highest level of data protection, so it's need the high throughput low latency network, you can use FastConnect or deploy the Data Guard in different ADs within the same region.
+You may encounter the performance issue when using the DML redirection. This is because each of the DML is issued on a standby database will be passed to the primary database where it is executed. The default Data Guard protection mode is Maximum Performance and the redo transport mode is ASYNC. The session waits until the corresponding changes are shipped to and applied to the standby. In order to improve performance of the DML redirection, you need to switch the redo logfile more frequently on the primary side, or you can change the protection mode to Maximum Availability and the redo transport mode to SYNC - This protection mode provides the highest level of data protection, but it's need the high throughput and low latency network, you can use FastConnect or deploy the Data Guard in different ADs within the same region.
 
-2. From the primary side, connect with Data Guard Broker, check the current protection mode and redo transport mode. Change the `orcl_nrt1d4` to your standby db unique name.
+2. From the primary side, connect with Data Guard Broker, check the current protection mode and redo transport mode. Replace the `orcl_nrt1d4` to your standby db unique name.
 
    ```
    [oracle@primary0 ~]$ dgmgrl sys/Ora_DB4U@orcl
@@ -477,7 +477,7 @@ You may encounter the performance issue when using the DML redirection. This is 
 
    
 
-3. Change the redo transport mode and protection mode. Change the `orcl_nrt1d4` to your standby db unique name.
+3. Switch the redo transport mode and protection mode. Replace the `orcl_nrt1d4` to your standby db unique name.
 
    ```
    DGMGRL> EDIT DATABASE orcl SET PROPERTY LogXptMode='SYNC';
@@ -534,7 +534,7 @@ You may encounter the performance issue when using the DML redirection. This is 
 
    
 
-5. From the primary side, in the Data Guard Broker, switch back the protection mode. Change the `orcl_nrt1d4` to your standby db unique name.
+5. From the primary side, in the Data Guard Broker, switch back the protection mode. Replace the `orcl_nrt1d4` to your standby db unique name.
 
    ```
    DGMGRL> EDIT CONFIGURATION SET PROTECTION MODE AS MAXPERFORMANCE;
