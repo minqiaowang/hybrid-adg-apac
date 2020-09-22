@@ -43,7 +43,7 @@ ssh -i labkey opc@xxx.xxx.xxx.xxx
 <copy>sudo yum -y install telnet</copy>
 ```
 
-   - From the on-premise side, telnet the public ip or hostname of the cloud host, enter `^]` and return to exist. 
+   - From the on-premise side, telnet the public ip or hostname of the cloud host, enter `^]` and return to exit. 
 
     ```
      [opc@workshop ~]$ telnet xxx.xxx.xxx.xxx 1521
@@ -57,7 +57,7 @@ ssh -i labkey opc@xxx.xxx.xxx.xxx
      [opc@workshop ~]$ 
      ```
 
-   - From the cloud side, telnet the public ip or hostname of the on-premise host, enter `^]` and return to exist. 
+   - From the cloud side, telnet the public ip or hostname of the on-premise host, enter `^]` and return to exit. 
 
     ```
      [opc@dbstby ~]$ telnet xxx.xxx.xxx.xxx 1521
