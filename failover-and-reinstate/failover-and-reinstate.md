@@ -16,7 +16,7 @@ In the previous lab, you have done the Data Guard switch over. Now, the current 
 1. From the Cloud side. Check the flashback status of the current primary database
 
 ```
-[oracle@dbstby ~]$ sqlplus / as sysdba
+[oracle@dbstby ~]$ <copy>sqlplus / as sysdba</copy>
 
 SQL*Plus: Release 19.0.0.0.0 - Production on Wed Feb 5 05:31:25 2020
 Version 19.7.0.0.0
@@ -28,7 +28,7 @@ Connected to:
 Oracle Database 19c EE Extreme Perf Release 19.0.0.0.0 - Production
 Version 19.7.0.0.0
 
-SQL> select open_mode,database_role,flashback_on from v$database;
+SQL> <copy>select open_mode,database_role,flashback_on from v$database;</copy>
 
 OPEN_MODE	     DATABASE_ROLE    FLASHBACK_ON
 -------------------- ---------------- ------------------
@@ -40,11 +40,11 @@ SQL>
 2. If the flashback is not enabled you need to setup database flashback on, otherwise you won't be able to reinstate the primary after the failover.
 
 ```
-SQL> shutdown immediate;
+SQL> <copy>shutdown immediate;</copy>
 Database closed.
 Database dismounted.
 ORACLE instance shut down.
-SQL> startup mount;
+SQL> <copy>startup mount;</copy>
 ORACLE instance started.
 
 Total System Global Area 1.6106E+10 bytes
@@ -53,25 +53,25 @@ Variable Size		 2080374784 bytes
 Database Buffers	 1.3992E+10 bytes
 Redo Buffers		   24399872 bytes
 Database mounted.
-SQL> alter database flashback on;
+SQL> <copy>alter database flashback on;</copy>
 
 Database altered.
 
-SQL> alter database open;
+SQL> <copy>alter database open;</copy>
 
 Database altered.
 
-SQL> alter pluggable database all open;
+SQL> <copy>alter pluggable database all open;</copy>
 
 Pluggable database altered.
 
-SQL> select open_mode,database_role,flashback_on from v$database;
+SQL> <copy>select open_mode,database_role,flashback_on from v$database;</copy>
 
 OPEN_MODE	     DATABASE_ROLE    FLASHBACK_ON
 -------------------- ---------------- ------------------
 READ WRITE	     PRIMARY	      YES
 
-SQL> exit
+SQL> <copy>exit</copy>
 Disconnected from Oracle Database 19c EE Extreme Perf Release 19.0.0.0.0 - Production
 Version 19.7.0.0.0
 [oracle@dbstby ~]$ 
@@ -82,7 +82,7 @@ Version 19.7.0.0.0
 1. Connect with DGMGRL, validate the primary and standby database
 
 ```
-[oracle@dbstby ~]$ dgmgrl sys/Ora_DB4U@orcl
+[oracle@dbstby ~]$ <copy>dgmgrl sys/Ora_DB4U@orcl</copy>
 DGMGRL for Linux: Release 19.0.0.0.0 - Production on Wed Feb 5 05:41:24 2020
 Version 19.7.0.0.0
 
@@ -91,7 +91,7 @@ Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
 Welcome to DGMGRL, type "help" for information.
 Connected to "ORCL"
 Connected as SYSDBA.
-DGMGRL> show configuration
+DGMGRL> <copy>show configuration</copy>
 
 Configuration - adgconfig
 
@@ -105,7 +105,7 @@ Fast-Start Failover:  Disabled
 Configuration Status:
 SUCCESS   (status updated 18 seconds ago)
 
-DGMGRL> validate database orcl_nrt1d4
+DGMGRL> <copy>validate database orcl_nrt1d4</copy>
 
   Database Role:    Primary database
 
@@ -116,7 +116,7 @@ DGMGRL> validate database orcl_nrt1d4
     Validating static connect identifier for the primary database orcl_nrt187...
     The static connect identifier allows for a connection to database "orcl_nrt187".
 
-DGMGRL> validate database orcl
+DGMGRL> <copy>validate database orcl</copy>
 
   Database Role:     Physical standby database
   Primary Database:  orcl_nrt1d4
@@ -141,10 +141,10 @@ DGMGRL>
 2. Failover to current standby.
 
 ```
-DGMGRL> failover to orcl
+DGMGRL> <copy>failover to orcl</copy>
 Performing failover NOW, please wait...
 Failover succeeded, new primary is "orcl"
-DGMGRL> show configuration
+DGMGRL> <copy>show configuration</copy>
 
 Configuration - adgconfig
 
